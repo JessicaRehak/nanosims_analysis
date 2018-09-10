@@ -1,1 +1,1 @@
-__all__ = ["isotope_data"]
+__all__ = ["analyzer"]
