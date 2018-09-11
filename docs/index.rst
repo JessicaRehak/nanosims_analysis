@@ -11,7 +11,7 @@ Welcome to NanoSIMS Data Analysis's documentation!
    :caption: Contents:
 
    importer
-   isotopedata	 
+   data_structures	 
 
 Indices and tables
 ==================

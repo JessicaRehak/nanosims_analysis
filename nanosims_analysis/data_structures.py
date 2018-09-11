@@ -1,6 +1,6 @@
 """
 
-.. module:: isotopedata
+.. module:: data_structures
     :synopsis: Data structure for Isotope and Ratio data.
 
 .. moduleauthor:: Joshua Rehak <jsrehak@berkeley.edu>

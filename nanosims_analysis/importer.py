@@ -6,7 +6,7 @@
 .. moduleauthor:: Joshua Rehak <jsrehak@berkeley.edu>
 
 """
-from nanosims_analysis.isotopedata import IsotopeData
+from nanosims_analysis.data_structures import IsotopeData
 import numpy as np
 from pathlib import Path
 import sims
