@@ -69,6 +69,7 @@ class IsotopeData(object):
         count_rate = np.divide(self._data, dwell_time)
         self._data = np.divide(count_rate,
                                1 - np.multiply(count_rate, dead_time))
+        self._data *= dwell_time
         self._is_deadtime_corrected = True
 
     def plot(self, mask=None):

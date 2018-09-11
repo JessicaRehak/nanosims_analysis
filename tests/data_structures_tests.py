@@ -17,13 +17,21 @@ class TestClass:
                                [0.85084851, 0.63285618, 0.93021085]]])
         cls.dwell_time = 0.006
         cls.dead_time  = 4*np.power(10.0,-9)
-        cls.dt_corrected = np.array([[[154.45509043, 164.51700493, 116.0817739 ],
-                                      [ 22.1586803 , 110.09737349, 119.70713565],
-                                      [ 65.44291046,   5.59210346,  71.79948562]],
+        # cls.dt_corrected = np.array([[[154.45509043, 164.51700493, 116.0817739 ],
+        #                               [ 22.1586803 , 110.09737349, 119.70713565],
+        #                               [ 65.44291046,   5.59210346,  71.79948562]],
 
-                                     [[  9.23901701,  98.83668241,  71.8224173 ],
-                                      [ 78.2080228 ,  84.20879336,  63.72567958],
-                                      [141.80816544, 105.4760745 , 155.03523781]]])
+        #                              [[  9.23901701,  98.83668241,  71.8224173 ],
+        #                               [ 78.2080228 ,  84.20879336,  63.72567958],
+        #                               [141.80816544, 105.4760745 , 155.03523781]]])
+        cls.dt_corrected = np.array([[[0.92673054, 0.98710203, 0.69649064],
+                                      [0.13295208, 0.66058424, 0.71824281],
+                                      [0.39265746, 0.03355262, 0.43079691]],
+
+                                     [[0.0554341 , 0.59302009, 0.4309345 ],
+                                      [0.46924814, 0.50525276, 0.38235408],
+                                      [0.85084899, 0.63285645, 0.93021143]]])
+
 
     def test_isotope_data_deadtime(self):
         testIsotope = IsotopeData("test", self.test_data)
@@ -44,13 +52,13 @@ class TestClass:
         testIsotope = IsotopeData("test", self.test_data)
         testIsotope.perform_deadtime_correction(dwell_time = self.dwell_time,
                                                 dead_time = self.dead_time)
-        y = testIsotope < 100;
+        y = testIsotope < 0.5;
         answer = np.array([[[False, False, False ],
                             [ True , False, False],
                             [ True,   True,  True]],
 
-                           [[  True,  True,  True ],
-                            [ True ,  True,  True],
+                           [[  True,  False,  True ],
+                            [ True ,  False,  True],
                             [False, False , False]]])
         assert_true(np.array_equal(y, answer))
 
@@ -58,13 +66,13 @@ class TestClass:
         testIsotope = IsotopeData("test", self.test_data)
         testIsotope.perform_deadtime_correction(dwell_time = self.dwell_time,
                                                 dead_time = self.dead_time)
-        y = testIsotope > 100;
+        y = testIsotope > 0.5;
         answer = np.array([[[True, True, True ],
                             [ False , True, True],
                             [ False,   False,  False]],
 
-                           [[  False,  False,  False ],
-                            [ False ,  False,  False],
+                           [[  False,  True,  False ],
+                            [ False ,  True,  False],
                             [True, True , True]]])
         assert_true(np.array_equal(y, answer))
         
