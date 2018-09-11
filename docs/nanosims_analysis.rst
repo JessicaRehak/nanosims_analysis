@@ -1,9 +1,9 @@
 NanoSIMS Data Analysis
 ******************************************
-Analyzer
+Importer
 ====================
 
-This is the analyzer used to analyze the NanoSIMS data
+Provides an object to import data from a NanoSIMS file, using the sims package by Zan Peeters, available on `github <https://github.com/zanpeeters/sims>`_.
 
-.. automodule:: nanosims_analysis.analyzer
+.. automodule:: nanosims_analysis.importer
    :members:
