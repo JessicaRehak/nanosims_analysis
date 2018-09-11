@@ -10,7 +10,8 @@ Welcome to NanoSIMS Data Analysis's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   nanosims_analysis
+   importer
+   isotopedata	 
 
 Indices and tables
 ==================

@@ -1,5 +1,5 @@
-NanoSIMS Data Analysis
-******************************************
+Importer Module
+********************
 Importer
 ====================
 
@@ -9,13 +9,4 @@ package by Zan Peeters, available on `github
 IsotopeData objects.
 
 .. automodule:: nanosims_analysis.importer
-   :members:
-
-IsotopeData
-====================
-
-Provides an object to hold the data for individual isotopes and the
-ratios of those isotopes.
-
-.. automodule:: nanosims_analysis.isotopedata
    :members:
