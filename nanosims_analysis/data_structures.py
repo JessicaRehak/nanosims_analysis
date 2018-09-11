@@ -8,6 +8,7 @@
 """
 
 import numpy as np
+import numpy.ma as ma
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -70,24 +71,36 @@ class IsotopeData(object):
                                1 - np.multiply(count_rate, dead_time))
         self._is_deadtime_corrected = True
 
-    def plot(self):
-        x = range(np.shape(self._data)[1])
-        y = range(np.shape(self._data)[2])
-        z_max = np.shape(self._data)[0]
-        X, Y = np.meshgrid(x,y)
+    def plot(self, mask=None):
+        """ Plot the isotope, with desired mask.
+
+        :param mask: Mask to be used.
+        :type mask: numpy bool array
+        """
+
+        # Get plot data
+        if type(mask) is np.ndarray:
+            plot_data = ma.masked_array(self._data, mask = mask)
+        else:
+            plot_data = self._data
         
+        x = range(np.shape(plot_data)[1])
+        y = range(np.shape(plot_data)[2])
+        z_max = np.shape(plot_data)[0]
+        X, Y = np.meshgrid(x,y)
+
         fig = plt.figure()
         ax = fig.add_subplot(111, projection = '3d')
         
-        vmin = np.min(self._data)
-        vmax = np.max(self._data)
+        vmin = np.min(plot_data)
+        vmax = np.max(plot_data)
         
         for z in range(z_max):
-            x_y_data = self._data[z, :, :]
+            x_y_data = plot_data[z, :, :]
             contour = ax.contourf(X, Y, x_y_data, zdir='z', offset=-z, alpha = 1,
                                   cmap = "CMRmap", vmin=vmin, vmax=vmax)
             
-        cbar = figp.colorbar(contour, ax = ax)
+        cbar = fig.colorbar(contour, ax = ax)
         
         if self._is_deadtime_corrected:
             cbar.ax.set_xlabel("Counts/sec")
