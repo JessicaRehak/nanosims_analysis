@@ -6,7 +6,7 @@
 .. moduleauthor:: Joshua Rehak <jsrehak@berkeley.edu>
 
 """
-
+from nanosims_analysis.isotopedata import IsotopeData
 import numpy as np
 from pathlib import Path
 import sims
@@ -43,4 +43,3 @@ class Importer(object):
             self._isotope_data.update({
                 label:
                 IsotopeData(label, isotope_data)})
-        
