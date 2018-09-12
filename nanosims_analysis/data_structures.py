@@ -38,7 +38,17 @@ class IsotopeData(object):
         return self._data > value
 
     def get_mask(self, lower=0, upper=np.Inf):
-        """Return a mask that will mask all data outside of the bounds given.
+        """Return a mask that will mask all data outside of the bounds given. \
+           note that the numpy mask sets values that *will* be masked to True.
+
+        :param lower: lower bound for mask (default 0), values less than this \
+                      will be masked.
+        :type type: float
+
+        :param upper: upper bound for mask (default infinity) , values more \
+                      than this will be masked.
+        :type upper: float
+        
         """
         return np.logical_or(self._data < lower, self._data > upper)
     
@@ -123,6 +133,15 @@ class IsotopeData(object):
         fig.text(x=0.2, y=0.02, s=values)
         
         plt.show()
+
+    def sum(self, mask=None):
+        """ Returns the sum of all the data in the dataset, with optional masking.
+
+        :param mask: numpy mask array.
+        :type mask: numpy array, optional)
+        """
+        masked_array = np.ma.array(self._data, mask=mask)
+        return masked_array.sum()
         
     def __str__(self):
         return_string = "label: " + self._label + "; "
@@ -131,3 +150,6 @@ class IsotopeData(object):
         if self._is_deadtime_corrected:
             return_string += "deadtime"
         return return_string
+
+
+    

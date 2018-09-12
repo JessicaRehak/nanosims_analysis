@@ -42,7 +42,36 @@ class TestClass:
         testIsotope.perform_deadtime_correction(dwell_time = self.dwell_time,
                                                 dead_time = self.dead_time)
 
-    def test_mask_lt(self):
+    def test_get_mask(self):
+        testIsotope = IsotopeData("test", self.test_data)
+        testIsotope.perform_deadtime_correction(dwell_time = self.dwell_time,
+                                                dead_time = self.dead_time)
+        y = testIsotope.get_mask(lower = 0.1, upper = 0.7)
+        answer = np.array([[[False, False, True ],
+                            [ True , True, False],
+                            [ True,   False,  True]],
+                           
+                           [[  False,  True,  True ],
+                            [ True ,  True,  True],
+                           [False, True , False]]])
+        assert_true(np.array_equal(y, np.invert(answer)))
+
+    def test_sum(self):
+        testIsotope = IsotopeData("test", self.test_data)
+        testIsotope.perform_deadtime_correction(dwell_time = self.dwell_time,
+                                                dead_time = self.dead_time)
+        sum = 9.82926987
+        assert_true(np.isclose(sum, testIsotope.sum()))
+
+    def test_sum_mask(self):
+        testIsotope = IsotopeData("test", self.test_data)
+        testIsotope.perform_deadtime_correction(dwell_time = self.dwell_time,
+                                                dead_time = self.dead_time)
+        y = testIsotope.get_mask(lower = 0.1, upper = 0.7)
+        sum = 5.32714735
+        assert_true(np.isclose(sum, testIsotope.sum(mask = y)))
+        
+    def test_lt(self):
         testIsotope = IsotopeData("test", self.test_data)
         testIsotope.perform_deadtime_correction(dwell_time = self.dwell_time,
                                                 dead_time = self.dead_time)
@@ -56,7 +85,7 @@ class TestClass:
                             [False, False , False]]])
         assert_true(np.array_equal(y, answer))
 
-    def test_mask_gt(self):
+    def test_gt(self):
         testIsotope = IsotopeData("test", self.test_data)
         testIsotope.perform_deadtime_correction(dwell_time = self.dwell_time,
                                                 dead_time = self.dead_time)
