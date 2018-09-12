@@ -36,6 +36,11 @@ class IsotopeData(object):
 
     def __gt__(self, value):
         return self._data > value
+
+    def get_mask(self, lower=0, upper=np.Inf):
+        """Return a mask that will mask all data outside of the bounds given.
+        """
+        return np.logical_or(self._data < lower, self._data > upper)
     
     def perform_deadtime_correction(self, dwell_time, dead_time):
         r""" Perform deadtime correction on the count data:\
@@ -103,10 +108,7 @@ class IsotopeData(object):
             
         cbar = fig.colorbar(contour, ax = ax)
         
-        if self._is_deadtime_corrected:
-            cbar.ax.set_xlabel("Counts/sec")
-        else:
-            cbar.ax.set_xlabel("Counts")
+        cbar.ax.set_xlabel("Counts")
 
         ax.set_zlim((-z_max,0))
         ax.set_zlim((-z_max,0))
@@ -116,6 +118,9 @@ class IsotopeData(object):
         ax.set_aspect('equal')
         ax.invert_xaxis()
         ax.view_init(elev=45, azim=45)
+
+        values = "Min value: " + str(vmin) + " Max value: " + str(vmax);
+        fig.text(x=0.2, y=0.02, s=values)
         
         plt.show()
         
