@@ -25,17 +25,23 @@ class IsotopeData(object):
 
     def __init__(self, isotope_label, isotope_data):
         self._label = isotope_label
-        self._data = isotope_data
+        self._data = np.array(isotope_data, dtype=float)
         self._is_deadtime_corrected = False
 
     def get_label(self):
         return self._label
 
+    def __leq__(self, value):
+        return self._data <= value
+    
     def __lt__(self, value):
         return self._data < value
 
     def __gt__(self, value):
         return self._data > value
+
+    def get_data(self):
+        return self._data
 
     def get_mask(self, lower=0, upper=np.Inf):
         """Return a mask that will mask all data outside of the bounds given. \
@@ -50,7 +56,7 @@ class IsotopeData(object):
         :type upper: float
         
         """
-        return np.logical_or(self._data < lower, self._data > upper)
+        return np.logical_or(self._data <= lower, self._data > upper)
     
     def perform_deadtime_correction(self, dwell_time, dead_time):
         r""" Perform deadtime correction on the count data:\
@@ -151,5 +157,14 @@ class IsotopeData(object):
             return_string += "deadtime"
         return return_string
 
-
+class RatioData(IsotopeData):
+    def __init__(self, label, numerator_isotope, denomenator_isotope):
+        self._label = label
+        numerator_data = numerator_isotope.get_data()
+        denomenator_data = denomenator_isotope.get_data()
+        self._data = np.divide(numerator_data, denomenator_data,
+                               out=np.zeros_like(denomenator_data),
+                               where=denomenator_data!=0)
     
+    def perform_deadtime_correction(self, dwell_time, dead_time):
+        raise RuntimeError("Deadtime correction cannot be performed on a ratio")
