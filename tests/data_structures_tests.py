@@ -1,5 +1,6 @@
 from nose.tools import *
 import numpy as np
+import numpy.ma as ma
 
 from nanosims_analysis.importer import Importer
 from nanosims_analysis.data_structures import IsotopeData
@@ -56,6 +57,15 @@ class TestClass:
                            [False, True , False]]])
         assert_true(np.array_equal(y, np.invert(answer)))
 
+    def test_n_pixels(self):
+        testIsotope = IsotopeData("test", self.test_data)
+        assert_equal(testIsotope.n_pixels(), 18)
+
+    def test_n_pixels_with_mask(self):
+        testIsotope = IsotopeData("test", self.test_data)
+        y = testIsotope.get_mask(lower = 0.1, upper = 0.7)
+        assert_equal(testIsotope.n_pixels(mask = y), 11)
+        
     def test_sum(self):
         testIsotope = IsotopeData("test", self.test_data)
         testIsotope.perform_deadtime_correction(dwell_time = self.dwell_time,
@@ -109,3 +119,19 @@ class TestClass:
                                                   
         assert_true(np.allclose(self.dt_corrected,
                                 test_importer.get_isotope("test")._data))
+
+    def test_get_data(self):
+        testIsotope = IsotopeData("test", self.test_data)
+        testIsotope.perform_deadtime_correction(dwell_time = self.dwell_time,
+                                                dead_time = self.dead_time)
+        y = testIsotope.get_mask(lower = 0.1, upper = 0.7)
+        answer = np.array([[[False, False, True ],
+                            [ True , True, False],
+                            [ True,   False,  True]],
+                           
+                           [[  False,  True,  True ],
+                            [ True ,  True,  True],
+                           [False, True , False]]])
+        assert_true(np.allclose(testIsotope.get_data(), self.dt_corrected))
+        assert_true(ma.allclose(testIsotope.get_data(mask = y),
+                                ma.array(self.dt_corrected, mask = y)))

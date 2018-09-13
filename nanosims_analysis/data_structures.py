@@ -40,14 +40,23 @@ class IsotopeData(object):
     def __gt__(self, value):
         return self._data > value
 
-    def get_data(self):
-        return self._data
+    def get_data(self, mask=None):
+        """ Return the isotope's data. Optionally include a mask to return a \
+        numpy masked array.
+
+        :param mask: mask to apply to the data.
+        :type mask: numpy bool array.
+        """
+        if type(mask) is np.ndarray:
+            return ma.array(self._data, mask = mask)
+        else:
+            return self._data
 
     def get_mask(self, lower=0, upper=np.Inf):
         """Return a mask that will mask all data outside of the bounds given. \
            note that the numpy mask sets values that *will* be masked to True.
 
-        :param lower: lower bound for mask (default 0), values less than this \
+        :param lower: lower bound for mask (default 0), values less than or equal to this \
                       will be masked.
         :type type: float
 
@@ -57,6 +66,18 @@ class IsotopeData(object):
         
         """
         return np.logical_or(self._data <= lower, self._data > upper)
+
+    def n_pixels(self, mask = None):
+        """Returns the total number of pixels in the dataset. Optionally masked \
+        to return the number of *non-masked* entries.
+
+        :param mask: mask to apply to the data.
+        :type mask: numpy bool array
+        """
+        if type(mask) == np.ndarray:
+            return ma.array(self._data, mask = mask).count()
+        else:
+            return self._data.size
     
     def perform_deadtime_correction(self, dwell_time, dead_time):
         r""" Perform deadtime correction on the count data:\
@@ -103,9 +124,13 @@ class IsotopeData(object):
         # Get plot data
         if type(mask) is np.ndarray:
             plot_data = ma.masked_array(self._data, mask = mask)
+            vmin = ma.min(plot_data)
+            vmax = ma.max(plot_data)
         else:
             plot_data = self._data
-        
+            vmin = np.min(plot_data)
+            vmax = np.max(plot_data)
+            
         x = range(np.shape(plot_data)[1])
         y = range(np.shape(plot_data)[2])
         z_max = np.shape(plot_data)[0]
@@ -114,8 +139,7 @@ class IsotopeData(object):
         fig = plt.figure()
         ax = fig.add_subplot(111, projection = '3d')
         
-        vmin = np.min(plot_data)
-        vmax = np.max(plot_data)
+
         
         for z in range(z_max):
             x_y_data = plot_data[z, :, :]
@@ -158,13 +182,27 @@ class IsotopeData(object):
         return return_string
 
 class RatioData(IsotopeData):
-    def __init__(self, label, numerator_isotope, denomenator_isotope):
+    r""" Create a datafile containing the ratios of two isotope data sets.\
+
+    .. math::
+       R = 
+       \begin{cases}
+       \frac{I_n}{I_d} & I_d \neq 0 \\ 0 & I_d = 0
+       \end{cases}
+    
+    where :math:`I_n` is the numerator isotope, and :math:`I_d` is the \
+    denominator isotope.
+    """
+    
+    def __init__(self, label, numerator_isotope, denominator_isotope):
         self._label = label
         numerator_data = numerator_isotope.get_data()
-        denomenator_data = denomenator_isotope.get_data()
-        self._data = np.divide(numerator_data, denomenator_data,
-                               out=np.zeros_like(denomenator_data),
-                               where=denomenator_data!=0)
+        denominator_data = denominator_isotope.get_data()
+        self._data = np.divide(numerator_data, denominator_data,
+                               out=np.zeros_like(denominator_data),
+                               where=denominator_data!=0)
     
     def perform_deadtime_correction(self, dwell_time, dead_time):
+        """ Should not be run on RatioData, returns a Runtimeerror, perform\
+        deadtime correction prior to calculating the ratio"""
         raise RuntimeError("Deadtime correction cannot be performed on a ratio")

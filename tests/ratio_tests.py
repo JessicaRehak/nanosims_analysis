@@ -19,7 +19,7 @@ class TestClass:
                                                         [465,  58, 995]]]))
 
 
-        cls.denomenator_isotope = IsotopeData("denomenator",
+        cls.denominator_isotope = IsotopeData("denominator",
                                               np.array([[[500, 475, 370],
                                                          [779,  37, 769],
                                                          [ 33, 796, 741]],
@@ -31,7 +31,7 @@ class TestClass:
     def test_ratio_init(self):
         testRatio = RatioData("test_ratio",
                               self.numerator_isotope,
-                              self.denomenator_isotope)
+                              self.denominator_isotope)
 
         ans = np.array([[[ 1.564     ,  1.35789474,  0.74324324],
                          [ 0.94094994, 23.64864865,  0.76723017],
@@ -46,5 +46,5 @@ class TestClass:
     def test_ratio_deadtime(self):
         testRatio = RatioData("test_ratio",
                               self.numerator_isotope,
-                              self.denomenator_isotope)
+                              self.denominator_isotope)
         testRatio.perform_deadtime_correction(2.0, 3.0)
