@@ -21,7 +21,7 @@ importer.import_file(filename)
 # Perform deadtime correction on all isotope data
 importer.deadtime_correct_all(dead_time = 44*10**-9)
 
-# # Assign objects to each isotope
+# # Assign IsotopeData objects to each isotope
 O16  = importer.get_isotope("16O")
 O17  = importer.get_isotope("17O")
 O18  = importer.get_isotope("18O")
@@ -29,7 +29,12 @@ Si28 = importer.get_isotope("28Si")
 S32  = importer.get_isotope("32S")
 Mg24 = importer.get_isotope("24Mg 16O")
 
-
-O17_to_O16 = RatioData("O17 to O16", numerator_isotope = O17,
+# Makes a RatioData object
+O18_to_O16 = RatioData("O18 to O16", numerator_isotope = O17,
                        denominator_isotope = O16)
 
+# Calculate R17 = O17/O16 using sums
+# Generate mask from O16 data
+O16mask = O16.get_mask(lower = 500)
+# Calculate the ratio using the masked sums
+R17 = O17.sum(O16mask)/O16.sum(O16mask)
