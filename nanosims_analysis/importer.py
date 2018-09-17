@@ -55,7 +55,8 @@ class Importer(object):
                       
             self._isotopes.update({
                 label:
-                IsotopeData(label, isotope_data)})
+                IsotopeData(isotope_label = label,
+                            isotope_data = isotope_data)})
 
         
     def deadtime_correct_all(self, dead_time, dwell_time=0):
