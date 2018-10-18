@@ -14,7 +14,7 @@ from nanosims_analysis.importer import Importer
 from nanosims_analysis.data_structures import RatioData
 
 # Set the filename
-filename  = "./Chim03 HumptyDumpty-1.im"
+filename  = "./Chim05_IDP_R1_1_1.im"
 
 print("Masked IDP analysis for file: " + str(filename))
 
@@ -33,6 +33,13 @@ Si28 = importer.get_isotope("28Si")
 S32  = importer.get_isotope("32S")
 Mg24 = importer.get_isotope("24Mg 16O")
 
+# Trim datasets
+trim = input("Trim front of dataset? [y/n] ")
+if str(trim) == 'y':
+    trim_amount = input("Please input number of cycles to trim: ")
+    for dataset in [O16, O17, O18, Si28, S32, Mg24]:
+        dataset.trim_front(int(trim_amount))
+    
 # Makes a RatioData object
 O18_to_O16 = RatioData("O18 to O16", numerator_isotope = O18,
                        denominator_isotope = O16)
@@ -147,3 +154,5 @@ twoErr18 = 2 * Err18
 
 # Print results (Needs to be updated with correct uncertainties)
 print("The IMF corrected d17O value is: " + str(d17Ocorr) + " +/- " + str(twoErr17) + " permil (2 sigma)" + "\nThe IMF corrected d18O value is: " + str(d18Ocorr) + " +/- " + str(twoErr18) + " permil (2 sigma)")
+
+O16.plot(O16mask)
