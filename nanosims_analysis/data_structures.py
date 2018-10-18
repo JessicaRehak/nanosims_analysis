@@ -107,6 +107,9 @@ class IsotopeData(object):
         print("Deadtime correction: isotope: " + self._label + ";\tdwell_time: " +
               str(dwell_time) + ";\tdead_time: " + str(dead_time))
 
+        self._dwell_time = dwell_time
+        self._dead_time = dead_time
+        
         # Perform deadtime correction
         count_rate = np.divide(self._data, dwell_time)
         self._data = np.divide(count_rate,
@@ -164,6 +167,14 @@ class IsotopeData(object):
         
         plt.show()
 
+    def trim_front(self, n):
+        """ Removes the first n cycles from the dataset
+
+        :param n: number of cycles to remove.
+        :type n: int
+        """
+        self._data = self._data[n:]
+        
     def sum(self, mask=None):
         """ Returns the sum of all the data in the dataset, with optional masking.
 
