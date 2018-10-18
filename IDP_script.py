@@ -14,7 +14,7 @@ from nanosims_analysis.importer import Importer
 from nanosims_analysis.data_structures import RatioData
 
 # Set the filename
-filename  = "./im20 IDP particle4-1 cor.im"
+filename  = "./Chim05_IDP_R1_1_1.im"
 
 print("Masked IDP analysis for file: " + str(filename))
 
@@ -33,6 +33,13 @@ Si28 = importer.get_isotope("28Si")
 S32  = importer.get_isotope("32S")
 Mg24 = importer.get_isotope("24Mg 16O")
 
+# Trim datasets
+trim = input("Trim front of dataset? [y/n] ")
+if str(trim) == 'y':
+    trim_amount = input("Please input number of cycles to trim: ")
+    for dataset in [O16, O17, O18, Si28, S32, Mg24]:
+        dataset.trim_front(int(trim_amount))
+    
 # Makes a RatioData object
 O18_to_O16 = RatioData("O18 to O16", numerator_isotope = O18,
                        denominator_isotope = O16)
@@ -41,6 +48,7 @@ O17_to_O16 = RatioData("O17 to O16", numerator_isotope = O17,
 
 
 # TO DO: Correct for QSA on RatioData object 
+# TO DO: Add reduced resolution option for imaging
 
 # Generate mask from O16 data
 O16mask = O16.get_mask(lower = 1000)
@@ -114,13 +122,15 @@ d2sig18 = 2*dsig18
 # Correct for instrumental mass fractionation (IMF)
 # Input standard (std) delta values, as measured by SIMS (M), and literature values (L) in units of permil
 
-d17OstdM = 12.96032501     ## USER INPUT - changes for each analysis!
-d18OstdM = 53.73358666     ## USER INPUT - changes for each analysis!
+##d17OstdM = float(input("Please input measured delta 17O value for standard (in permil): "))
+##d17OstdErr = float(input("Please input 1 sigma uncertainty on d17O for standard (in permil): "))
+##d18OstdM = float(input("Please input measured delta 17O value for standard (in permil): "))
+##d18OstdErr = float(input("Please input 1 sigma uncertainty on d18O for standard (in permil): "))
 
-## d17OstdM = int(input("Please input measured delta 17O value for standard (in permil): "))
-## d17OstdErr = int(input("Please input 1 sigma uncertainty on d17O for standard (in permil): "))
-## d18OstdM = int(input("Please input measured delta 17O value for standard (in permil): "))
-## d18OstdErr = int(input("Please input 1 sigma uncertainty on d18O for standard (in permil): "))
+d17OstdM = 51.37322054
+d17OstdErr = 2.729224551
+d18OstdM = 78.87885747
+d18OstdErr = 1.207378055
 
 d17OstdL = 2.7             # San Carlos olivine (Tanaka and Nakamura, 2013) 
 d18OstdL = 5.3             # San Carlos olivine (Tanaka and Nakamura, 2013) 
@@ -135,7 +145,14 @@ IMF18 = d18OstdM - d18OstdL
 d17Ocorr = delta17O - IMF17
 d18Ocorr = delta18O - IMF18
 
-# TO DO: Quadratically combine uncertainties (= sqrt( (sigma_unk)^2 + (sigma_std)^2 )
+# Calculate combined uncertainties for IMF corrected data 
+Err17 = np.sqrt(np.power(dsig17,2) + np.power(d17OstdErr,2))
+Err18 = np.sqrt(np.power(dsig18,2) + np.power(d18OstdErr,2))
+
+twoErr17 = 2 * Err17
+twoErr18 = 2 * Err18
 
 # Print results (Needs to be updated with correct uncertainties)
-print("The IMF corrected d17O value is: " + str(d17Ocorr) + " +/- " + str(d2sig17) + " permil (2 sigma)" + "\nThe IMF corrected d18O value is: " + str(d18Ocorr) + " +/- " + str(d2sig18) + " permil (2 sigma)")
+print("The IMF corrected d17O value is: " + str(d17Ocorr) + " +/- " + str(twoErr17) + " permil (2 sigma)" + "\nThe IMF corrected d18O value is: " + str(d18Ocorr) + " +/- " + str(twoErr18) + " permil (2 sigma)")
+
+O16.plot(O16mask)

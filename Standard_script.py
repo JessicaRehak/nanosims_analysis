@@ -14,7 +14,7 @@ from nanosims_analysis.importer import Importer
 from nanosims_analysis.data_structures import RatioData
 
 # Set the filename
-filename  = "./im20 IDP particle4-1 cor.im"
+filename  = "./im21 SC olivine FIB .im"
 
 print("Standard analysis for file: " + str(filename))
 
