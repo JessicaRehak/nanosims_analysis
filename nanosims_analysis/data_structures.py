@@ -173,6 +173,10 @@ class IsotopeData(object):
         :param n: number of cycles to remove.
         :type n: int
         """
+        z_max = np.shape(self._data)[0]
+        if n > z_max:
+            raise RuntimeError("trim amount: " + str(n) +
+                               " exceeds number of cycles: " + str(z_max))
         self._data = self._data[n:]
         
     def sum(self, mask=None):

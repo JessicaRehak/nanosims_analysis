@@ -6,6 +6,7 @@
 .. moduleauthor:: Joshua Rehak <jsrehak@berkeley.edu>
 
 """
+
 from nanosims_analysis.data_structures import IsotopeData
 import numpy as np
 from pathlib import Path
@@ -77,6 +78,10 @@ class Importer(object):
         for label, isotope in self._isotopes.items():
             isotope.perform_deadtime_correction(dwell_time = self._dwell_time,
                                                 dead_time = self._dead_time)
+
+    def trim_front_all(self, n):
+        for label, isotope in self._isotopes.items():
+            isotope.trim_front(int(n))
 
     def __str__(self):
         return_string = "Importer object\nImported file: " + self._filename + "\n";
