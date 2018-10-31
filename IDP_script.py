@@ -40,8 +40,7 @@ Mg24 = importer.get_isotope("24Mg 16O")
 trim = input("Trim front of dataset? [y/n] ")
 if str(trim) == 'y':
     trim_amount = input("Please input number of cycles to trim: ")
-    for dataset in [O16, O17, O18, Si28, S32, Mg24]:
-        dataset.trim_front(int(trim_amount))
+    importer.trim_front_all(trim_amount)
     
 # Makes a RatioData object
 O18_to_O16 = RatioData("O18 to O16", numerator_isotope = O18,
@@ -166,5 +165,10 @@ print("The IMF corrected d17O value is: " + str(d17Ocorr) + " +/- " + str(twoErr
 
 # TO DO: Append Data to CSV - write function that appends
 # append = input("Append data to CSV file? [y/n] ")
+
+# Save numpy array to file 
+from tempfile import TemporaryFile
+outfile = TemporaryFile()
+np.save("O16.npy", O16, fix_imports=True)
 
 O16.plot(O16mask)

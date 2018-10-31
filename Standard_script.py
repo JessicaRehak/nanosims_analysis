@@ -40,8 +40,7 @@ Mg24 = importer.get_isotope("24Mg 16O")
 trim = input("Trim front of dataset? [y/n] ")
 if str(trim) == 'y':
     trim_amount = input("Please input number of cycles to trim: ")
-    for dataset in [O16, O17, O18, Si28, S32, Mg24]:
-        dataset.trim_front(int(trim_amount))
+    importer.trim_front_all(trim_amount)
 
 # Makes a RatioData object
 O18_to_O16 = RatioData("O18 to O16", numerator_isotope = O18,
