@@ -67,6 +67,9 @@ class IsotopeData(object):
         """
         return np.logical_or(self._data <= lower, self._data > upper)
 
+    def n_cycles(self):
+        return np.shape(self._data)[0]
+    
     def n_pixels(self, mask = None):
         """Returns the total number of pixels in the dataset. Optionally masked \
         to return the number of *non-masked* entries.

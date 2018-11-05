@@ -90,6 +90,10 @@ class TestClass:
         testIsotope = IsotopeData("test", self.test_data)
         y = testIsotope.get_mask(lower = 0.1, upper = 0.7)
         assert_equal(testIsotope.n_pixels(mask = y), 11)
+
+    def test_n_pixels_with_mask(self):
+        testIsotope = IsotopeData("test", self.test_data)
+        assert_equal(testIsotope.n_cycles(), 2)
         
     def test_sum(self):
         testIsotope = IsotopeData("test", self.test_data)
