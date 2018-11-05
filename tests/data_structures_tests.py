@@ -59,6 +59,15 @@ class TestClass:
             assert_equal(np.shape(testIsotope._data)[0],
                          n - t)
 
+    def test_isotope_data_trim_back_ok(self):
+        for n in [4, 5, 100, 32]:
+            random_data = np.random.rand(n, 20, 20)
+            testIsotope = IsotopeData("test", random_data)
+            t = np.random.randint(0, n-1)
+            testIsotope.trim_back(t)
+            assert_equal(np.shape(testIsotope._data)[0],
+                         n - t)
+
     def test_get_mask(self):
         testIsotope = IsotopeData("test", self.test_data)
         testIsotope.perform_deadtime_correction(dwell_time = self.dwell_time,

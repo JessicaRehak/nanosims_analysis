@@ -167,6 +167,18 @@ class IsotopeData(object):
         
         plt.show()
 
+    def trim_back(self, n):
+        """ Removes the last n cycles from the dataset
+
+        :param n: number of cycles to remove.
+        :type n: int
+        """
+        z_max = np.shape(self._data)[0]
+        if n > z_max:
+            raise RuntimeError("trim amount: " + str(n) +
+                               " exceeds number of cycles: " + str(z_max))
+        self._data = self._data[:z_max-n]
+        
     def trim_front(self, n):
         """ Removes the first n cycles from the dataset
 
@@ -177,7 +189,7 @@ class IsotopeData(object):
         if n > z_max:
             raise RuntimeError("trim amount: " + str(n) +
                                " exceeds number of cycles: " + str(z_max))
-        self._data = self._data[n:]
+        self._data = self._data[n:]       
         
     def sum(self, mask=None):
         """ Returns the sum of all the data in the dataset, with optional masking.
