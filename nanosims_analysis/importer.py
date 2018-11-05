@@ -79,6 +79,10 @@ class Importer(object):
             isotope.perform_deadtime_correction(dwell_time = self._dwell_time,
                                                 dead_time = self._dead_time)
 
+    def trim_back_all(self, n):
+        for label, isotope in self._isotopes.items():
+            isotope.trim_back(int(n))
+            
     def trim_front_all(self, n):
         for label, isotope in self._isotopes.items():
             isotope.trim_front(int(n))
