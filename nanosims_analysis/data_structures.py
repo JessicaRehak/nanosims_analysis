@@ -13,6 +13,11 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
+try:
+    from pyevtk.hl import gridToVTK
+except ImportError:
+    print("Unable to load pvevtk, output to VTK will be disabled")
+
 class IsotopeData(object):
     """ Create an IsotopeData file for an isotope with given name, and data.
     
@@ -202,7 +207,27 @@ class IsotopeData(object):
         """
         masked_array = np.ma.array(self._data, mask=mask)
         return masked_array.sum()
+
+    def to_VTK(self, filename, x_roll=0, y_roll=0):
         
+        output_data = np.zeros_like(self._data)
+        
+        for i, cycle in enumerate(self._data):
+            output_data[i] = np.roll(cycle, [x_roll,y_roll], axis=[0,1])
+        output_data = np.swapaxes(output_data, 0, 2)
+        
+        (nz, nx, ny) = np.shape(self._data)
+        ncells = nx * ny * nz 
+        npoints = (nx + 1) * (ny + 1) * (nz + 1) 
+
+        # Coordinates 
+        X = np.arange(0, nx + 0.1, 1, dtype='float64') 
+        Y = np.arange(0, ny + 0.1, 1, dtype='float64') 
+        Z = np.arange(0, nz + 0.1, 1, dtype='float64') 
+
+        gridToVTK(filename, X, Y, Z, cellData = {self._label : output_data})
+            
+    
     def __str__(self):
         return_string = "label: " + self._label + "; "
         return_string += "\tData size: " + str(np.shape(self._data))

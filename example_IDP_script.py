@@ -47,4 +47,12 @@ O18_to_O16 = RatioData("O18 to O16", numerator_isotope = O18,
 O17_to_O16 = RatioData("O17 to O16", numerator_isotope = O17,
                        denominator_isotope = O16)
 
-O16.plot()
+
+# Output to a VTK File.
+#
+# For this dataset, there is one pixel at the END of the x-range and y-range
+# that need to be moved to the front of the data set (this is an issue with the
+# .im file), so we set x_roll and y_roll to 1. Negative values will move that
+# number of pixels from the front to the end, the reverse operation.
+#
+O16.to_VTK("./structured", x_roll = 1, y_roll = 1)
