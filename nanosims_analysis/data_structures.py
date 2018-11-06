@@ -232,14 +232,12 @@ class IsotopeData(object):
             output_data[i] = np.roll(cycle, [x_roll,y_roll], axis=[0,1])
         output_data = np.swapaxes(output_data, 0, 2)
         
-        (nz, nx, ny) = np.shape(self._data)
-        ncells = nx * ny * nz 
-        npoints = (nx + 1) * (ny + 1) * (nz + 1) 
+        (nx, ny, nz) = np.shape(output_data)
 
         # Coordinates 
-        X = np.arange(0, nx + 0.1, 1, dtype='float64') 
-        Y = np.arange(0, ny + 0.1, 1, dtype='float64') 
-        Z = np.arange(0, nz + 0.1, 1, dtype='float64') 
+        X = np.arange(0, nx + 1, 1, dtype='float64') 
+        Y = np.arange(0, ny + 1, 1, dtype='float64') 
+        Z = np.arange(0, nz + 1, 1, dtype='float64') 
 
         gridToVTK(filename, X, Y, Z, cellData = {self._label : output_data})
             
