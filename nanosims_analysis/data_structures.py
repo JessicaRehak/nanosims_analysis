@@ -198,6 +198,22 @@ class IsotopeData(object):
             raise RuntimeError("trim amount: " + str(n) +
                                " exceeds number of cycles: " + str(z_max))
         self._data = self._data[n:]       
+
+    def roll_data(self, x_roll=0, y_roll=0):
+        """ Rolls the data in the dataset: moves a given number of rows of data
+            in the specified direction from the end of the dataset to the front,
+            or vice-versa. For example, setting x_roll=1 will move one row from
+            the end of the dataset in the x-direction to the beginning of the
+            x-direction. Rolling again with x_roll=-1 will undo this.
+
+        :param x_roll: amount to roll in the x-direction
+        :type x_roll: int
+
+        :param y_roll: amount to roll in the y-direction
+        :type y_roll: int
+        """        
+        for i, cycle in enumerate(self._data):
+            self._data[i] = np.roll(cycle, [x_roll, y_roll], axis = [0, 1])
         
     def sum(self, mask=None):
         """ Returns the sum of all the data in the dataset, with optional masking.
@@ -208,7 +224,7 @@ class IsotopeData(object):
         masked_array = np.ma.array(self._data, mask=mask)
         return masked_array.sum()
 
-    def to_VTK(self, filename, x_roll=0, y_roll=0):
+    def to_VTK(self, filename, x_roll=0, y_roll=0): #pragma: no cover
         
         output_data = np.zeros_like(self._data)
         

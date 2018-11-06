@@ -43,6 +43,37 @@ class TestClass:
         testIsotope.perform_deadtime_correction(dwell_time = self.dwell_time,
                                                 dead_time = self.dead_time)
 
+    def test_roll(self):
+        testIsotope = IsotopeData("test", self.test_data)
+        #rolled 1 in x
+        x_rolled = np.array([[[0.39265736, 0.03355262, 0.43079679],
+                              [0.92672997, 0.98710138, 0.69649032],
+                              [0.13295207, 0.66058395, 0.71824247]],
+                             [[0.85084851, 0.63285618, 0.93021085],
+                              [0.0554341,  0.59301986, 0.43093438],
+                              [0.46924799, 0.50525259, 0.38235398]]])
+        # rolled 1 in y
+        y_rolled = np.array([[[0.69649032, 0.92672997, 0.98710138],
+                              [0.71824247, 0.13295207, 0.66058395],
+                              [0.43079679, 0.39265736, 0.03355262]],
+                             [[0.43093438, 0.0554341,  0.59301986],
+                              [0.38235398, 0.46924799, 0.50525259],
+                              [0.93021085, 0.85084851, 0.63285618]]])
+        # Rolled 1 in x, 2 in y
+        x_y_rolled = np.array([[[0.03355262, 0.43079679, 0.39265736],
+                                [0.98710138, 0.69649032, 0.92672997],
+                                [0.66058395, 0.71824247, 0.13295207]],
+                               [[0.63285618, 0.93021085, 0.85084851],
+                                [0.59301986, 0.43093438, 0.0554341 ],
+                                [0.50525259, 0.38235398, 0.46924799]]])
+
+        testIsotope.roll_data(x_roll = 1)
+        assert_true(np.allclose(testIsotope.get_data(), x_rolled))
+        testIsotope.roll_data(x_roll = -1, y_roll = 1)
+        assert_true(np.allclose(testIsotope.get_data(), y_rolled))
+        testIsotope.roll_data(x_roll = 1, y_roll = 1)
+        assert_true(np.allclose(testIsotope.get_data(), x_y_rolled))
+        
     @raises(RuntimeError)
     def test_isotope_data_trim_too_much(self):
         for n in [4, 5, 100, 32]:
