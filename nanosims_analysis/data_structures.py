@@ -224,11 +224,13 @@ class IsotopeData(object):
         masked_array = np.ma.array(self._data, mask=mask)
         return masked_array.sum()
 
-    def to_VTK(self, filename, x_roll=0, y_roll=0): #pragma: no cover
+    def to_VTK(self, filename, x_roll=0, y_roll=0, mask=None): #pragma: no cover
+
+        to_output = np.ma.array(self._data, mask=mask, fill_value=-1).filled()
         
         output_data = np.zeros_like(self._data)
-        
-        for i, cycle in enumerate(self._data):
+
+        for i, cycle in enumerate(to_output):
             output_data[i] = np.roll(cycle, [x_roll,y_roll], axis=[0,1])
         output_data = np.swapaxes(output_data, 0, 2)
         
