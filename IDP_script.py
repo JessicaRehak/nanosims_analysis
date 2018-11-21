@@ -12,9 +12,10 @@
 import numpy as np
 from nanosims_analysis.importer import Importer
 from nanosims_analysis.data_structures import RatioData
+#from src.hl import gridToVTK 
 
 # Set the filename
-filename  = "./Chim05_IDP_R1_1_1.im"
+filename  = "Chim05_SC_Olivine_FIB_2_1.im"
 
 print("Masked IDP analysis for file: " + str(filename))
 
@@ -28,6 +29,12 @@ primary_current = int(input("Please input primary current (in pA): "))
 # Perform deadtime correction on all isotope data
 importer.deadtime_correct_all(dead_time = 44*10**-9)
 
+# For this dataset, there is one pixel at the END of the x-range and y-range
+# that need to be moved to the front of the data set (this is an issue with the
+# .im file), so we set x_roll and y_roll to 1. Negative values will move that
+# number of pixels from the front to the end, the reverse operation.
+importer.roll_all(x_roll = 1, y_roll = 1)
+
 # # Assign IsotopeData objects to each isotope
 O16  = importer.get_isotope("16O")
 O17  = importer.get_isotope("17O")
@@ -39,8 +46,16 @@ Mg24 = importer.get_isotope("24Mg 16O")
 # Trim datasets
 trim = input("Trim front of dataset? [y/n] ")
 if str(trim) == 'y':
-    trim_amount = input("Please input number of cycles to trim: ")
+    trim_amount = input("Please input number of cycles to trim from front: ")
     importer.trim_front_all(trim_amount)
+
+trimb = input("Trim back of dataset? [y/n] ")
+if str(trimb) == 'y':
+    trimb_amount = input("Please input number of cycles to trim from back: ")
+    importer.trim_back_all(trimb_amount)
+    
+# return number of cycles
+ncycles = O16.n_cycles()
     
 # Makes a RatioData object
 O18_to_O16 = RatioData("O18 to O16", numerator_isotope = O18,
@@ -135,17 +150,14 @@ d2sig18 = 2*dsig18
 ##d18OstdM = float(input("Please input measured delta 17O value for standard (in permil): "))
 ##d18OstdErr = float(input("Please input 1 sigma uncertainty on d18O for standard (in permil): "))
 
-d17OstdM = 46.72917798
-d17OstdErr = 2.105784649
-d18OstdM = 79.72088695
-d18OstdErr = 0.932857265
+d17OstdM = 18.62939811
+d17OstdErr = 3.102282541
+d18OstdM = 42.72560561
+d18OstdErr = 1.366749018
 
 d17OstdL = 2.7             # San Carlos olivine (Tanaka and Nakamura, 2013) 
 d18OstdL = 5.3             # San Carlos olivine (Tanaka and Nakamura, 2013) 
 print("Standardized to San Carlos olivine (Tanaka and Nakamura, 2013)")
-
-# TO DO: Add python prompt for standard inputs above instead of being hard-written into script
-# TO DO: Add uncertainties for measured standards (use standard deviation)
 
 IMF17 = d17OstdM - d17OstdL
 IMF18 = d18OstdM - d18OstdL
@@ -167,8 +179,19 @@ print("The IMF corrected d17O value is: " + str(d17Ocorr) + " +/- " + str(twoErr
 # append = input("Append data to CSV file? [y/n] ")
 
 # Save numpy array to file 
-from tempfile import TemporaryFile
-outfile = TemporaryFile()
-np.save("O16.npy", O16, fix_imports=True)
+# from tempfile import TemporaryFile
+# outfile = TemporaryFile()
+# np.save("O16.npy", O16, fix_imports=True)
+
+
+## Export data to VTK file 
+# Dimensions 
+O16.to_VTK("./VTK_output_files/" + filename + "_16O", x_roll = 1, y_roll = 1)
+
+O18_to_O16.to_VTK("./VTK_output_files/" + filename + "_18to16O", x_roll = 1, y_roll = 1, mask=O16mask)
 
 O16.plot(O16mask)
+
+
+
+
