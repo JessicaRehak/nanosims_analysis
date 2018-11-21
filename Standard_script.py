@@ -14,7 +14,7 @@ from nanosims_analysis.importer import Importer
 from nanosims_analysis.data_structures import RatioData
 
 # Set the filename
-filename  = "./im21 SC olivine FIB .im"
+filename  = "./Chim06 SC olivine FIB_5_1.im"
 
 print("Standard analysis for file: " + str(filename))
 
@@ -42,6 +42,11 @@ if str(trim) == 'y':
     trim_amount = input("Please input number of cycles to trim: ")
     importer.trim_front_all(trim_amount)
 
+trimb = input("Trim back of dataset? [y/n] ")
+if str(trimb) == 'y':
+    trimb_amount = input("Please input number of cycles to trim from back: ")
+    importer.trim_back_all(trimb_amount)    
+    
 # Makes a RatioData object
 O18_to_O16 = RatioData("O18 to O16", numerator_isotope = O18,
                        denominator_isotope = O16)
